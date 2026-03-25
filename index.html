@@ -1249,35 +1249,22 @@
     setTimeout(()=>c.innerHTML='', 5500);
   }
 
-  /* ── Google Form (iframe POST — most reliable approach) ── */
-  const GF_URL          = 'https://docs.google.com/forms/d/e/1FAIpQLScBwzfJKVNeAJmOZao3gZ-RWfOGAEDh0v1JqCtNBlMG8b0w0A/viewform?usp=header';
-  const GF_ENTRY_NAME   = 'entry.865270240';
-  const GF_ENTRY_PHONE  = 'entry.520169318';
-  const GF_ENTRY_GUESTS = 'entry.1651660730';
-  const GF_ENTRY_ATTEND = 'entry.1883198147';
-  const GF_ENTRY_MSG    = 'entry.1586760955';
+  /* ── Google Apps Script submission ── */
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzpz_fxTxLsuRk_gSArLdEx2K3t8DADI1Abzcpcrp72VJwZfQKhMP7Ah5J_E9JWq6Ei/exec';
 
   function submitGF(d) {
-    const fields = {
-      [GF_ENTRY_NAME]:   d.name,
-      [GF_ENTRY_PHONE]:  d.phone,
-      [GF_ENTRY_GUESTS]: d.guests,
-      [GF_ENTRY_ATTEND]: d.attendance,
-      [GF_ENTRY_MSG]:    d.message
-    };
-    const form = document.createElement('form');
-    form.method  = 'POST';
-    form.action  = GF_URL;
-    form.target  = 'gf_iframe';
-    form.style.display = 'none';
-    Object.entries(fields).forEach(([name, val]) => {
-      const inp = document.createElement('input');
-      inp.type = 'hidden'; inp.name = name; inp.value = val || '';
-      form.appendChild(inp);
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:       d.name,
+        phone:      d.phone,
+        guests:     d.guests,
+        attendance: d.attendance,
+        message:    d.message
+      })
     });
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(() => document.body.removeChild(form), 2000);
   }
 
   /* ── Invitation card download (Canvas PNG) ── */
